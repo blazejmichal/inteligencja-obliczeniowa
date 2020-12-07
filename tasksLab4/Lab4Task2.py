@@ -17,6 +17,7 @@
 
 import pandas
 import sklearn
+from sklearn.metrics import accuracy_score, confusion_matrix, plot_confusion_matrix
 from sklearn.tree import tree, export_text
 import matplotlib.pyplot as plt
 from sklearn import tree
@@ -31,6 +32,8 @@ class Lab4Task2:
         testSet = sets[1]
         clf = cls.runB(trainSet)
         cls.runC(clf)
+        (trueValues, predictions) = cls.runD(clf, testSet)
+        cls.runE(trueValues, predictions)
         pass
 
     @classmethod
@@ -74,5 +77,32 @@ class Lab4Task2:
         pass
 
     @classmethod
-    def runD(cls):
+    def runD(cls, classifier, testSet):
+        testSetArguments = testSet.iloc[:, : 4]
+
+        df_mod = testSet.copy()
+        targets = df_mod['variety'].unique()
+        map_to_int = {name: n for n, name in enumerate(targets)}
+        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
+        df_mod["variety"] = df_mod['variety'].replace(map_to_int)
+        trueValues = df_mod.iloc[:, -1:]
+        # Trzeba odwrocic kolejnosc, bo klasyfikator sortuje w jakis sposob rezultaty
+        trueValues = trueValues[::-1]
+
+        predictions = classifier.predict(testSetArguments)
+        accuracy = accuracy_score(trueValues, predictions)
+        percentage = "{0:.0%}".format(accuracy)
+        print("Skuteczność drzewa: " + str(percentage))
+        return (trueValues, predictions)
+
+    @classmethod
+    def runE(cls, trueValues, predictions):
+        confusionMatrix = confusion_matrix(trueValues, predictions)
+        print(confusionMatrix)
+        positivePredictions = confusionMatrix[0][0] + confusionMatrix[1][1] + confusionMatrix[2][2]
+        negativePredictions = sum(confusionMatrix[0]) + sum(confusionMatrix[1]) + sum(
+            confusionMatrix[2]) - positivePredictions
+        print(
+            'Poprawnie sklasyfikowane: ' + str(positivePredictions) + '\n' + 'Falszywie sklasyfikowane: ' + str(
+                negativePredictions))
         pass
