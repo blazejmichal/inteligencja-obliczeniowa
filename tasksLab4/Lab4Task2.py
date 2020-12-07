@@ -17,7 +17,7 @@
 
 import pandas
 import sklearn
-from sklearn.tree import tree
+from sklearn.tree import tree, export_text
 import matplotlib.pyplot as plt
 from sklearn import tree
 
@@ -29,8 +29,8 @@ class Lab4Task2:
         sets = cls.runA()
         trainSet = sets[0]
         testSet = sets[1]
-        cls.runB()
-        # cls.test()
+        clf = cls.runB(trainSet)
+        cls.runC(clf)
         pass
 
     @classmethod
@@ -44,12 +44,11 @@ class Lab4Task2:
         return (trainSet, testSet)
 
     @classmethod
-    def runB(cls):
-        test = sklearn.__version__
+    def runB(cls, trainSet):
         dataFrame = pandas.read_csv('iris.csv')
         print("* iris types:", dataFrame['variety'].unique(), sep="\n")
         target_column = 'variety'
-        df_mod = dataFrame.copy()
+        df_mod = trainSet.copy()
         targets = df_mod[target_column].unique()
         map_to_int = {name: n for n, name in enumerate(targets)}
         # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
@@ -59,7 +58,21 @@ class Lab4Task2:
         y = df_mod["Target"]
         x = df_mod[features]
         clf = tree.DecisionTreeClassifier()
-        fig = clf.fit(x, y)
-        tree.plot_tree(fig)
+        clf = clf.fit(x, y)
+        return clf
+
+    @classmethod
+    def runC(cls, clf):
+        # Graf
+        tree.plot_tree(clf)
         plt.show()
+        # Tekst
+        dataFrame = pandas.read_csv('iris.csv')
+        features = list(dataFrame.columns[:4])
+        r = export_text(clf, feature_names=features)
+        print(r)
+        pass
+
+    @classmethod
+    def runD(cls):
         pass
