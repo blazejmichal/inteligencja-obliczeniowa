@@ -24,12 +24,14 @@
 # d) Pytanie dodatkowe:
 # Chcemy zminimalizować błędy, gdy klasyfikator chore osoby klasyfikuje jako zdrowe ( i
 # odsyła do domu bez leków). Który z klasyfikatorów najbardziej się do tego nadaje?
+from sklearn import tree
+
 import pandas
-from sklearn.datasets import load_iris
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
+import numpy as numpy
 
 
 class Lab5Task3:
@@ -38,8 +40,40 @@ class Lab5Task3:
     def run(cls):
         # (trainSet, testSet) = cls.divideDataFrame()
         (bayes_y_true, bayes_y_predictions,) = cls.runNaiveBayes()
-        cls.drawConfusionMatrix(bayes_y_true, bayes_y_predictions)
+        (bayes_scores, bayes_misses) = cls.drawConfusionMatrix(bayes_y_true, bayes_y_predictions)
+        (tree_y_true, tree_y_predictions) = cls.runTree()
+        (tree_scores, tree_misses) = cls.drawConfusionMatrix(tree_y_true, tree_y_predictions)
+        cls.drawSummaryBarChart((bayes_scores, bayes_misses), (tree_scores, tree_misses))
+        cls.drawAccuracyBarChart(cls.countAccuracy((bayes_scores, bayes_misses)),
+                                 cls.countAccuracy((tree_scores, tree_misses)))
         pass
+
+    @classmethod
+    def runNaiveBayes(cls):
+        dataFrame = pandas.read_csv('diabetes.csv')
+        (x, y) = cls.getXandY(dataFrame, 8, 'class')
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
+        gnb = GaussianNB().fit(X_train, y_train)
+        y_predictions = gnb.predict(X_test)
+        y_predictions = cls.mapListToBoolean(y_predictions)
+        y_true_values = y_test.to_numpy()
+        y_true_values = cls.mapListToBoolean(y_true_values)
+        print('\nAlgorytm naiwny Bayesowski')
+        return (y_true_values, y_predictions)
+
+    @classmethod
+    def runTree(cls):
+        dataFrame = pandas.read_csv('diabetes.csv')
+        (x, y) = cls.getXandY(dataFrame, 8, 'class')
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
+        treeClassifier = tree.DecisionTreeClassifier()
+        treeClassifier = treeClassifier.fit(X_train, y_train)
+        y_predictions = treeClassifier.predict(X_test)
+        y_predictions = cls.mapListToBoolean(y_predictions)
+        y_true_values = y_test.to_numpy()
+        y_true_values = cls.mapListToBoolean(y_true_values)
+        print('Drzewo decyzyjne')
+        return (y_true_values, y_predictions)
 
     @classmethod
     def drawConfusionMatrix(cls, y_true_values, y_prediction):
@@ -65,21 +99,7 @@ class Lab5Task3:
         print('True Negative: ' + str(confusionMatrix[1][1]))
         print('False Positive: ' + str(confusionMatrix[1][0]))
         print('False Negative: ' + str(confusionMatrix[0][1]))
-        pass
-
-    @classmethod
-    def runNaiveBayes(cls):
-        dataFrame = pandas.read_csv('diabetes.csv')
-        # X, y = load_iris(return_X_y=True)
-        (x, y) = cls.getXandY(dataFrame, 8, 'class')
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
-        gnb = GaussianNB().fit(X_train, y_train)
-        y_predictions = gnb.predict(X_test)
-        y_predictions = cls.mapListToBoolean(y_predictions)
-        y_true_values = y_test.to_numpy()
-        y_true_values = cls.mapListToBoolean(y_true_values)
-        print('Algorytm naiwny Bayesowski')
-        return (y_true_values, y_predictions)
+        return (positivePredictions, negativePredictions)
 
     @classmethod
     def getXandY(cls, dataFrame, featureColumnAmount, resultColumnName):
@@ -93,3 +113,27 @@ class Lab5Task3:
     def mapListToBoolean(cls, list):
         changes = {'tested_positive': 0, 'tested_negative': 1}
         return [changes.get(x, x) for x in list]
+
+    @classmethod
+    def drawSummaryBarChart(cls, bayes, tree):
+        objects = ('Bayes TP&TN', 'Bayes zle FP&FN', 'Tree TN', 'Tree FP&FN')
+        y_pos = numpy.arange(len(objects))
+        performance = [bayes[0], bayes[1], tree[0], tree[1]]
+        plt.bar(y_pos, performance, align='center', alpha=0.5)
+        plt.xticks(y_pos, objects)
+        plt.title('Strzaly')
+        plt.show()
+
+    @classmethod
+    def drawAccuracyBarChart(cls, bayes, tree):
+        objects = ('Bayes', 'Tree')
+        y_pos = numpy.arange(len(objects))
+        performance = [bayes, tree]
+        plt.bar(y_pos, performance, align='center', alpha=0.5)
+        plt.xticks(y_pos, objects)
+        plt.title('Dokladnosc')
+        plt.show()
+
+    @classmethod
+    def countAccuracy(cls, shots):
+        return shots[0] / (sum(shots))
