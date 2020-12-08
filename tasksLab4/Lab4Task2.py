@@ -16,7 +16,6 @@
 # popełniał klasyfikator wskazując na liczby w macierzy błędu.
 
 import pandas
-import sklearn
 from sklearn.metrics import accuracy_score, confusion_matrix, plot_confusion_matrix
 from sklearn.tree import tree, export_text
 import matplotlib.pyplot as plt
@@ -27,6 +26,8 @@ class Lab4Task2:
 
     @classmethod
     def run(cls):
+        dataFrame = pandas.read_csv('iris.csv')
+        print("* iris types:", dataFrame['variety'].unique(), sep="\n")
         sets = cls.runA()
         trainSet = sets[0]
         testSet = sets[1]
@@ -43,22 +44,15 @@ class Lab4Task2:
         testSet = dataFrame.drop(trainSet.index)
         print('Dlugosc treningowego: ' + str(trainSet.size))
         print('Dlugosc testujacego: ' + str(testSet.size))
-        print(trainSet.size + testSet.size == dataFrame.size)
+        print('Jest 100%: ' + str(trainSet.size + testSet.size == dataFrame.size))
         return (trainSet, testSet)
 
     @classmethod
     def runB(cls, trainSet):
-        dataFrame = pandas.read_csv('iris.csv')
-        print("* iris types:", dataFrame['variety'].unique(), sep="\n")
-        target_column = 'variety'
-        df_mod = trainSet.copy()
-        targets = df_mod[target_column].unique()
-        map_to_int = {name: n for n, name in enumerate(targets)}
-        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
-        df_mod["Target"] = df_mod[target_column].replace(map_to_int)
+        df_mod = cls.mapVarietyColumn(trainSet)
         # bierze nazwy 4 pierwszych kolumn
-        features = list(dataFrame.columns[:4])
-        y = df_mod["Target"]
+        features = list(df_mod.columns[:4])
+        y = df_mod["variety"]
         x = df_mod[features]
         clf = tree.DecisionTreeClassifier()
         clf = clf.fit(x, y)
@@ -78,17 +72,12 @@ class Lab4Task2:
 
     @classmethod
     def runD(cls, classifier, testSet):
+        testSet = cls.mapVarietyColumn(testSet)
         testSetArguments = testSet.iloc[:, : 4]
-
-        df_mod = testSet.copy()
-        targets = df_mod['variety'].unique()
-        map_to_int = {name: n for n, name in enumerate(targets)}
-        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
-        df_mod["variety"] = df_mod['variety'].replace(map_to_int)
-        trueValues = df_mod.iloc[:, -1:]
+        # Zostawia tylko ostatnio kolumne
+        trueValues = testSet.iloc[:, -1:]
         # Trzeba odwrocic kolejnosc, bo klasyfikator sortuje w jakis sposob rezultaty
         trueValues = trueValues[::-1]
-
         predictions = classifier.predict(testSetArguments)
         accuracy = accuracy_score(trueValues, predictions)
         percentage = "{0:.0%}".format(accuracy)
@@ -106,3 +95,12 @@ class Lab4Task2:
             'Poprawnie sklasyfikowane: ' + str(positivePredictions) + '\n' + 'Falszywie sklasyfikowane: ' + str(
                 negativePredictions))
         pass
+
+    @classmethod
+    def mapVarietyColumn(cls, dataFrame):
+        df_mod = dataFrame.copy()
+        targets = df_mod['variety'].unique()
+        map_to_int = {name: n for n, name in enumerate(targets)}
+        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
+        df_mod["variety"] = df_mod['variety'].replace(map_to_int)
+        return df_mod
