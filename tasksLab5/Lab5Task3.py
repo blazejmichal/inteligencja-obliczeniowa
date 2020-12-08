@@ -32,20 +32,44 @@ from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 import matplotlib.pyplot as plt
 import numpy as numpy
+from sklearn.neighbors import KNeighborsClassifier
 
 
 class Lab5Task3:
 
     @classmethod
     def run(cls):
-        # (trainSet, testSet) = cls.divideDataFrame()
         (bayes_y_true, bayes_y_predictions,) = cls.runNaiveBayes()
-        (bayes_scores, bayes_misses) = cls.drawConfusionMatrix(bayes_y_true, bayes_y_predictions)
+        (bayes_scores, bayes_misses) = cls.drawConfusionMatrix(bayes_y_true, bayes_y_predictions, 'Bayes')
+
         (tree_y_true, tree_y_predictions) = cls.runTree()
-        (tree_scores, tree_misses) = cls.drawConfusionMatrix(tree_y_true, tree_y_predictions)
-        cls.drawSummaryBarChart((bayes_scores, bayes_misses), (tree_scores, tree_misses))
+        (tree_scores, tree_misses) = cls.drawConfusionMatrix(tree_y_true, tree_y_predictions, 'Tree')
+
+        (three_neighbours_true, three_neighbours_y_predictions) = cls.runNeighbours(3)
+        (three_neighbours_scores, three_neighbours_misses) = cls.drawConfusionMatrix(three_neighbours_true,
+                                                                                     three_neighbours_y_predictions,
+                                                                                     '3KNN')
+
+        (five_neighbours_true, five_neighbours_y_predictions) = cls.runNeighbours(5)
+        (five_neighbours_scores, five_neighbours_misses) = cls.drawConfusionMatrix(five_neighbours_true,
+                                                                                   five_neighbours_y_predictions,
+                                                                                   '5KNN')
+
+        (eleven_neighbours_true, eleven_neighbours_y_predictions) = cls.runNeighbours(11)
+        (eleven_neighbours_scores, eleven_neighbours_misses) = cls.drawConfusionMatrix(eleven_neighbours_true,
+                                                                                       eleven_neighbours_y_predictions,
+                                                                                       '11KNN')
+
+        cls.drawSummaryBarChart((bayes_scores, bayes_misses),
+                                (tree_scores, tree_misses),
+                                (three_neighbours_scores, three_neighbours_misses),
+                                (five_neighbours_scores, five_neighbours_misses),
+                                (eleven_neighbours_scores, eleven_neighbours_misses))
         cls.drawAccuracyBarChart(cls.countAccuracy((bayes_scores, bayes_misses)),
-                                 cls.countAccuracy((tree_scores, tree_misses)))
+                                 cls.countAccuracy((tree_scores, tree_misses)),
+                                 cls.countAccuracy((three_neighbours_scores, three_neighbours_misses)),
+                                 cls.countAccuracy((five_neighbours_scores, five_neighbours_misses)),
+                                 cls.countAccuracy((eleven_neighbours_scores, eleven_neighbours_misses)))
         pass
 
     @classmethod
@@ -76,14 +100,28 @@ class Lab5Task3:
         return (y_true_values, y_predictions)
 
     @classmethod
-    def drawConfusionMatrix(cls, y_true_values, y_prediction):
+    def runNeighbours(cls, times):
+        dataFrame = pandas.read_csv('diabetes.csv')
+        (x, y) = cls.getXandY(dataFrame, 8, 'class')
+        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
+        kNeighborsClassifier = KNeighborsClassifier(n_neighbors=times, metric='euclidean')
+        kNeighborsClassifier.fit(X_train, y_train)
+        y_predictions = kNeighborsClassifier.predict(X_test)
+        y_predictions = cls.mapListToBoolean(y_predictions)
+        y_true_values = y_test.to_numpy()
+        y_true_values = cls.mapListToBoolean(y_true_values)
+        print(str(times) + ' najblizszych sasiadow')
+        return (y_true_values, y_predictions)
+
+    @classmethod
+    def drawConfusionMatrix(cls, y_true_values, y_prediction, algorithmName):
         confusionMatrix = confusion_matrix(y_true_values, y_prediction)
         print(confusionMatrix)
         labels = ['Chory', 'Zdrowy']
         fig = plt.figure()
         ax = fig.add_subplot(111)
         cax = ax.matshow(confusionMatrix)
-        plt.title('Confusion matrix of the classifier')
+        plt.title(algorithmName)
         fig.colorbar(cax)
         ax.set_xticklabels([''] + labels)
         ax.set_yticklabels([''] + labels)
@@ -115,20 +153,23 @@ class Lab5Task3:
         return [changes.get(x, x) for x in list]
 
     @classmethod
-    def drawSummaryBarChart(cls, bayes, tree):
-        objects = ('Bayes TP&TN', 'Bayes zle FP&FN', 'Tree TN', 'Tree FP&FN')
+    def drawSummaryBarChart(cls, bayes, tree, threeKNN, fiveKNN, elevenKNN):
+        objects = (
+            'Bayes TP&TN', 'Bayes FP&FN', 'Tree TP&TN', 'Tree FP&FN', '3KNN TP&TN', '3KNN FP&FN', '5KNN TP&TN',
+            '5KNN FP&FN', '11KNN TP&TN', '11KNN FP&FN')
         y_pos = numpy.arange(len(objects))
-        performance = [bayes[0], bayes[1], tree[0], tree[1]]
+        performance = [bayes[0], bayes[1], tree[0], tree[1], threeKNN[0], threeKNN[1], fiveKNN[0], fiveKNN[1],
+                       elevenKNN[0], elevenKNN[1]]
         plt.bar(y_pos, performance, align='center', alpha=0.5)
         plt.xticks(y_pos, objects)
         plt.title('Strzaly')
         plt.show()
 
     @classmethod
-    def drawAccuracyBarChart(cls, bayes, tree):
-        objects = ('Bayes', 'Tree')
+    def drawAccuracyBarChart(cls, bayes, tree, threeKNN, fiveKNN, elevenKNN):
+        objects = ('Bayes', 'Tree', '3KNN', '5KNN', '11KNN')
         y_pos = numpy.arange(len(objects))
-        performance = [bayes, tree]
+        performance = [bayes, tree, threeKNN, fiveKNN, elevenKNN]
         plt.bar(y_pos, performance, align='center', alpha=0.5)
         plt.xticks(y_pos, objects)
         plt.title('Dokladnosc')
