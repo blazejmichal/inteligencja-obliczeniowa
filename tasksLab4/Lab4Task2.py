@@ -92,7 +92,7 @@ class Lab4Task2:
         negativePredictions = sum(confusionMatrix[0]) + sum(confusionMatrix[1]) + sum(
             confusionMatrix[2]) - positivePredictions
         print(
-            'Poprawnie sklasyfikowane: ' + str(positivePredictions) + '\n' + 'Falszywie sklasyfikowane: ' + str(
+            'Poprawnie sklasyfikowane: ' + str(positivePredictions) + '\n' + 'Zle sklasyfikowane: ' + str(
                 negativePredictions))
         pass
 
