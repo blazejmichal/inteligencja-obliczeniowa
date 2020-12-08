@@ -1,5 +1,6 @@
-from projekt.model.Item import Item
 from random import randrange
+
+from praca_projektowa_1.model.Item import Item
 
 
 class ItemsInitilizer:

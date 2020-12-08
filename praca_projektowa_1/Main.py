@@ -1,8 +1,9 @@
-from projekt.algorithms.BackpackBruteForce import BackpackBruteForce
-from projekt.algorithms.BackpackGeneticAlgorithm import BackpackGeneticAlgorithm
-from projekt.algorithms.BackpackGreedyAlgorithm import BackpackGreedyAlgorithm
-from projekt.service.ItemsInitilizer import ItemsInitilizer
 from matplotlib import pyplot as plt
+
+from praca_projektowa_1.algorithms.BackpackBruteForce import BackpackBruteForce
+from praca_projektowa_1.algorithms.BackpackGeneticAlgorithm import BackpackGeneticAlgorithm
+from praca_projektowa_1.algorithms.BackpackGreedyAlgorithm import BackpackGreedyAlgorithm
+from praca_projektowa_1.service.ItemsInitilizer import ItemsInitilizer
 
 """
 Uniemozliwa zmiany w inpucie przy przechodzeniu pomiedzy algorytmami.
