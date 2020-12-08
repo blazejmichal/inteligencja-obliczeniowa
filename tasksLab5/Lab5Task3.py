@@ -29,6 +29,7 @@ from sklearn.datasets import load_iris
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
+import matplotlib.pyplot as plt
 
 
 class Lab5Task3:
@@ -44,6 +45,17 @@ class Lab5Task3:
     def drawConfusionMatrix(cls, y_true_values, y_prediction):
         confusionMatrix = confusion_matrix(y_true_values, y_prediction)
         print(confusionMatrix)
+        labels = ['Chory', 'Zdrowy']
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        cax = ax.matshow(confusionMatrix)
+        plt.title('Confusion matrix of the classifier')
+        fig.colorbar(cax)
+        ax.set_xticklabels([''] + labels)
+        ax.set_yticklabels([''] + labels)
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.show()
         positivePredictions = confusionMatrix[0][0] + confusionMatrix[1][1]
         negativePredictions = sum(confusionMatrix[0]) + sum(confusionMatrix[1]) - positivePredictions
         print(
@@ -63,35 +75,21 @@ class Lab5Task3:
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
         gnb = GaussianNB().fit(X_train, y_train)
         y_predictions = gnb.predict(X_test)
+        y_predictions = cls.mapListToBoolean(y_predictions)
         y_true_values = y_test.to_numpy()
+        y_true_values = cls.mapListToBoolean(y_true_values)
         print('Algorytm naiwny Bayesowski')
         return (y_true_values, y_predictions)
 
     @classmethod
-    def getXandY(cls, trainSet, featureColumnAmount, resultColumnName):
-        df_mod = cls.mapResultColumn(trainSet, resultColumnName)
+    def getXandY(cls, dataFrame, featureColumnAmount, resultColumnName):
         # bierze nazwy pierwszych kolumn okreslonych liczba
-        features = list(df_mod.columns[:featureColumnAmount])
-        y = df_mod[resultColumnName]
-        x = df_mod[features]
+        features = list(dataFrame.columns[:featureColumnAmount])
+        y = dataFrame[resultColumnName]
+        x = dataFrame[features]
         return (x, y)
 
     @classmethod
-    def mapResultColumn(cls, dataFrame, resultColumnName):
-        df_mod = dataFrame.copy()
-        targets = df_mod[resultColumnName].unique()
-        map_to_int = {name: n for n, name in enumerate(targets)}
-        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
-        df_mod[resultColumnName] = df_mod[resultColumnName].replace(map_to_int)
-        return df_mod
-
-    # @classmethod
-    # def divideDataFrame(cls):
-    #     dataFrame = pandas.read_csv('diabetes.csv')
-    #     trainSet = dataFrame.sample(frac=0.67, random_state=0)
-    #     testSet = dataFrame.drop(trainSet.index)
-    #     print('Dlugosc treningowego: ' + str(trainSet.size))
-    #     print('Dlugosc testujacego: ' + str(testSet.size))
-    #     print('Jest 100%: ' + str(trainSet.size + testSet.size == dataFrame.size))
-    #     return (trainSet, testSet)
-
+    def mapListToBoolean(cls, list):
+        changes = {'tested_positive': 0, 'tested_negative': 1}
+        return [changes.get(x, x) for x in list]
