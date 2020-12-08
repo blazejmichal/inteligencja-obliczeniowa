@@ -88,6 +88,16 @@ class Lab4Task2:
     def runE(cls, trueValues, predictions):
         confusionMatrix = confusion_matrix(trueValues, predictions)
         print(confusionMatrix)
+        labels = ['Setosa', 'Versicolor', 'Virginica']
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        cax = ax.matshow(confusionMatrix)
+        fig.colorbar(cax)
+        ax.set_xticklabels([''] + labels)
+        ax.set_yticklabels([''] + labels)
+        plt.xlabel('Predicted')
+        plt.ylabel('True')
+        plt.show()
         positivePredictions = confusionMatrix[0][0] + confusionMatrix[1][1] + confusionMatrix[2][2]
         negativePredictions = sum(confusionMatrix[0]) + sum(confusionMatrix[1]) + sum(
             confusionMatrix[2]) - positivePredictions
@@ -99,8 +109,6 @@ class Lab4Task2:
     @classmethod
     def mapVarietyColumn(cls, dataFrame):
         df_mod = dataFrame.copy()
-        targets = df_mod['variety'].unique()
-        map_to_int = {name: n for n, name in enumerate(targets)}
-        # Dodanie kolumny z zmapowanymi na int wartosciami z kolumny variety
-        df_mod["variety"] = df_mod['variety'].replace(map_to_int)
+        changes = {'Setosa': 0, 'Versicolor': 1, 'Virginica': 2}
+        df_mod['variety'] = [changes.get(x, x) for x in df_mod['variety']]
         return df_mod
