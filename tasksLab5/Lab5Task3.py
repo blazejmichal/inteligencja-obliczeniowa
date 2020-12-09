@@ -36,10 +36,16 @@ from sklearn.neighbors import KNeighborsClassifier
 
 
 class Lab5Task3:
+    X_train = []
+    X_test = []
+    y_train = []
+    y_test = []
 
     @classmethod
     def run(cls):
-        (bayes_y_true, bayes_y_predictions,) = cls.runNaiveBayes()
+        cls.getSets()
+
+        (bayes_y_true, bayes_y_predictions) = cls.runNaiveBayes()
         (bayes_scores, bayes_misses) = cls.drawConfusionMatrix(bayes_y_true, bayes_y_predictions, 'Bayes')
 
         (tree_y_true, tree_y_predictions) = cls.runTree()
@@ -74,44 +80,46 @@ class Lab5Task3:
 
     @classmethod
     def runNaiveBayes(cls):
-        dataFrame = pandas.read_csv('diabetes.csv')
-        (x, y) = cls.getXandY(dataFrame, 8, 'class')
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
-        gnb = GaussianNB().fit(X_train, y_train)
-        y_predictions = gnb.predict(X_test)
-        y_predictions = cls.mapListToBoolean(y_predictions)
-        y_true_values = y_test.to_numpy()
-        y_true_values = cls.mapListToBoolean(y_true_values)
+        gnb = GaussianNB().fit(cls.X_train, cls.y_train)
+        y_predictions = gnb.predict(cls.X_test)
+        y_predictions = cls.mapDataSet(y_predictions)
+        y_true_values = cls.y_test.to_numpy()
+        y_true_values = cls.mapDataSet(y_true_values)
         print('\nAlgorytm naiwny Bayesowski')
         return (y_true_values, y_predictions)
 
     @classmethod
     def runTree(cls):
-        dataFrame = pandas.read_csv('diabetes.csv')
-        (x, y) = cls.getXandY(dataFrame, 8, 'class')
-        X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
         treeClassifier = tree.DecisionTreeClassifier()
-        treeClassifier = treeClassifier.fit(X_train, y_train)
-        y_predictions = treeClassifier.predict(X_test)
-        y_predictions = cls.mapListToBoolean(y_predictions)
-        y_true_values = y_test.to_numpy()
-        y_true_values = cls.mapListToBoolean(y_true_values)
+        treeClassifier = treeClassifier.fit(cls.X_train, cls.y_train)
+        y_predictions = treeClassifier.predict(cls.X_test)
+        y_predictions = cls.mapDataSet(y_predictions)
+        y_true_values = cls.y_test.to_numpy()
+        y_true_values = cls.mapDataSet(y_true_values)
         print('Drzewo decyzyjne')
         return (y_true_values, y_predictions)
 
     @classmethod
     def runNeighbours(cls, times):
+        kNeighborsClassifier = KNeighborsClassifier(n_neighbors=times, metric='euclidean')
+        kNeighborsClassifier.fit(cls.X_train, cls.y_train)
+        y_predictions = kNeighborsClassifier.predict(cls.X_test)
+        y_predictions = cls.mapDataSet(y_predictions)
+        y_true_values = cls.y_test.to_numpy()
+        y_true_values = cls.mapDataSet(y_true_values)
+        print(str(times) + ' najblizszych sasiadow')
+        return (y_true_values, y_predictions)
+
+    @classmethod
+    def getSets(cls):
         dataFrame = pandas.read_csv('diabetes.csv')
         (x, y) = cls.getXandY(dataFrame, 8, 'class')
         X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
-        kNeighborsClassifier = KNeighborsClassifier(n_neighbors=times, metric='euclidean')
-        kNeighborsClassifier.fit(X_train, y_train)
-        y_predictions = kNeighborsClassifier.predict(X_test)
-        y_predictions = cls.mapListToBoolean(y_predictions)
-        y_true_values = y_test.to_numpy()
-        y_true_values = cls.mapListToBoolean(y_true_values)
-        print(str(times) + ' najblizszych sasiadow')
-        return (y_true_values, y_predictions)
+        cls.X_train = X_train
+        cls.X_test = X_test
+        cls.y_train = y_train
+        cls.y_test = y_test
+        pass
 
     @classmethod
     def drawConfusionMatrix(cls, y_true_values, y_prediction, algorithmName):
@@ -148,9 +156,9 @@ class Lab5Task3:
         return (x, y)
 
     @classmethod
-    def mapListToBoolean(cls, list):
+    def mapDataSet(cls, dataSet):
         changes = {'tested_positive': 0, 'tested_negative': 1}
-        return [changes.get(x, x) for x in list]
+        return [changes.get(x, x) for x in dataSet]
 
     @classmethod
     def drawSummaryBarChart(cls, bayes, tree, threeKNN, fiveKNN, elevenKNN):
@@ -167,11 +175,11 @@ class Lab5Task3:
 
     @classmethod
     def drawAccuracyBarChart(cls, bayes, tree, threeKNN, fiveKNN, elevenKNN):
-        objects = ('Bayes', 'Tree', '3KNN', '5KNN', '11KNN')
-        y_pos = numpy.arange(len(objects))
+        x_objects = ('Bayes', 'Tree', '3KNN', '5KNN', '11KNN')
+        y_pos = numpy.arange(len(x_objects))
         performance = [bayes, tree, threeKNN, fiveKNN, elevenKNN]
         plt.bar(y_pos, performance, align='center', alpha=0.5)
-        plt.xticks(y_pos, objects)
+        plt.xticks(y_pos, x_objects)
         plt.title('Dokladnosc')
         plt.show()
 
