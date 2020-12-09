@@ -69,7 +69,7 @@ class BackpackGeneticAlgorithm:
         return fitnessValues
 
     """
-    Metoda licza fitness dla chromosmu. 
+    Metoda liczaca fitness dla chromosomu. 
     """
 
     @classmethod
