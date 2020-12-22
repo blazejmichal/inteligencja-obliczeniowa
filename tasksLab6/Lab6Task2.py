@@ -14,7 +14,12 @@ class Lab6Task2:
     def run(cls):
         print("\nLab6Task2")
         iris = load_iris()
-        datasets = train_test_split(iris.data, iris.target, test_size=0.2)
+        cls.runMlp(iris, 0.2, 10, 1000)
+        cls.runMlp(iris, 0.25, 20, 2000)
+
+    @classmethod
+    def runMlp(cls, iris, testSize, hiddenLayersSize, maxIter):
+        datasets = train_test_split(iris.data, iris.target, test_size=testSize)
         train_data, test_data, train_labels, test_labels = datasets
         # normalizedIrisData = preprocessing.normalize(iris.data)
         # Skalowanie zbioru danych
@@ -23,7 +28,7 @@ class Lab6Task2:
         train_data = scaler.transform(train_data)
         test_data = scaler.transform(test_data)
         # Klasyfikator Multi Layer Perceptron
-        mlp = MLPClassifier(hidden_layer_sizes=(10, 10), max_iter=1000)
+        mlp = MLPClassifier(hidden_layer_sizes=(hiddenLayersSize, hiddenLayersSize), max_iter=maxIter)
         # labels to kolumna z wynikami (jaki gatunek kwiatu)
         # uczenie klasyfikatora
         mlp.fit(train_data, train_labels)

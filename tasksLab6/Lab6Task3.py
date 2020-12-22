@@ -24,7 +24,7 @@ class Lab6Task3:
 
     @classmethod
     def runMLP(cls):
-        mlp = MLPClassifier(hidden_layer_sizes=(10, 10), max_iter=1000)
+        mlp = MLPClassifier(hidden_layer_sizes=(20, 20), max_iter=2000)
         trainedMlp = mlp.fit(cls.X_train, cls.y_train)
         y_predictions = trainedMlp.predict(cls.X_test)
         y_predictions = cls.mapDataSet(y_predictions)
