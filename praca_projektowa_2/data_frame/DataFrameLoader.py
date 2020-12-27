@@ -55,8 +55,7 @@
 # Relevant publication
 #
 # P. Cortez, A. Cerdeira, F. Almeida, T. Matos and J. Reis. Modeling wine preferences by data mining from physicochemical properties. In Decision Support Systems, Elsevier, 47(4):547-553, 2009.
-
-
+import numpy
 import pandas as pandas
 from sklearn.model_selection import train_test_split
 
@@ -75,6 +74,7 @@ class DataFrameLoader:
         dataFrame = self.correctDataFrame(dataFrame)
         (x, y) = self.getXandY(dataFrame, self.feature_column_amount, self.result_column_name)
         self.divideDataFrame(x, y)
+        return dataFrame
 
     def loadDataFrame(self):
         dataFrame = pandas.read_csv(self.data_frame_location)
@@ -82,11 +82,10 @@ class DataFrameLoader:
 
     def divideDataFrame(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
-        self.X_train = x_train
-        self.X_test = y_test
+        self.x_train = x_train
+        self.x_test = y_test
         self.y_train = y_train
         self.y_test = y_test
-        # return x_train, x_test, y_train, y_test
         pass
 
     def getXandY(self, dataFrame, featureColumnAmount, resultColumnName):
@@ -96,13 +95,17 @@ class DataFrameLoader:
         x = dataFrame[features]
         return (x, y)
 
-    def correctDataFrame(self, dataFrame):
-        print("znalezione suma: ")
-        print(dataFrame.isnull().any(axis=1).sum())
-        print("znalezione linie: ")
-        print(dataFrame[dataFrame.isna().any(axis=1)])
-        dataFrame = dataFrame.fillna("N/A")
-        return dataFrame
+    def correctDataFrame(self, data_frame):
+        for col in data_frame.columns:
+            data_frame[col] = pandas.to_numeric(data_frame[col], errors='coerce')
+        errors = data_frame[data_frame.isna().any(axis=1)]
+        errors_amount = errors.shape[0]
+        print("Ilość krotek zawierających nieprawidłowe dane: ")
+        print(errors_amount)
+        if (errors_amount > 0):
+            data_frame = data_frame.dropna()
+            # data_frame = data_frame.fillna(None)
+        return data_frame
 
     def __init__(self):
         pass
@@ -117,6 +120,12 @@ class DataFrameLoader:
         data_frame_loader.result_column_name = result_column_name
         data_frame_loader.data_frame_location = data_frame_location
         return data_frame_loader
+
+    def mapColumn(cls, data_frame, mapping_pattern, column_name):
+        df_mod = data_frame.copy()
+        # mapping_pattern = {'Setosa': 0, 'Versicolor': 1, 'Virginica': 2}
+        df_mod[column_name] = [mapping_pattern.get(x, x) for x in df_mod[column_name]]
+        return df_mod
 
     # @property
     # def feature_column_amount(self):

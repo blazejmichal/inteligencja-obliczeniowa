@@ -1,4 +1,4 @@
-from praca_projektowa_2.DataFrameLoader import DataFrameLoader
+from praca_projektowa_2.data_frame.DataFrameLoader import DataFrameLoader
 
 
 def main():
