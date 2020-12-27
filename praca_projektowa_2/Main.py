@@ -1,3 +1,4 @@
+from praca_projektowa_2.classifiers.KNeighboursClassifier import KNeighboursClassifier
 from praca_projektowa_2.classifiers.NaiveBayesClassifier import NaiveBayesClassifier
 from praca_projektowa_2.classifiers.TreeClassifier import TreeClassifier
 from praca_projektowa_2.data_frame.DataFrameLoader import DataFrameLoader
@@ -16,6 +17,8 @@ def main():
     naive_bayess_classifier.run()
     tree_classifier = TreeClassifier.build(x_train, x_test, y_train, y_test)
     tree_classifier.run()
+    k_neighbours_classifier = KNeighboursClassifier.build(x_train, x_test, y_train, y_test, 1)
+    k_neighbours_classifier.run()
 
 
 if __name__ == '__main__':
