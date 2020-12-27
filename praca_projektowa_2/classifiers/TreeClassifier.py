@@ -1,17 +1,17 @@
 import numpy
-from sklearn.naive_bayes import GaussianNB
+from matplotlib import pyplot
 from sklearn.metrics import confusion_matrix, accuracy_score
-import matplotlib.pyplot as pyplot
+from sklearn import tree
 
 
-class NaiveBayesAlgorithm:
+class TreeClassifier:
     x_train = []
     x_test = []
     y_train = []
     y_test = []
 
     def run(self):
-        print('Naive Bayess')
+        print('Drzewa decyzyjne')
         y_true_values = self.getTrueValuesOfTrainSet()
         classificator = self.train()
         y_predictions = self.predict(classificator)
@@ -21,8 +21,9 @@ class NaiveBayesAlgorithm:
         pass
 
     def train(self):
-        naive_bayess_classificator = GaussianNB().fit(self.x_train, self.y_train)
-        return naive_bayess_classificator
+        classifier = tree.DecisionTreeClassifier()
+        classifier = classifier.fit(self.x_train, self.y_train)
+        return classifier
 
     def predict(self, classificator):
         y_predictions = classificator.predict(self.x_test)
@@ -38,7 +39,7 @@ class NaiveBayesAlgorithm:
         fig = pyplot.figure()
         ax = fig.add_subplot(111)
         cax = ax.matshow(confusionMatrix)
-        pyplot.title('Naive Bayess')
+        pyplot.title('Drzewa decyzyjne')
         fig.colorbar(cax)
         ax.set_xticklabels([''] + labels)
         ax.set_yticklabels([''] + labels)
@@ -46,7 +47,7 @@ class NaiveBayesAlgorithm:
         pyplot.ylabel('True')
         pyplot.show()
         accuracy = accuracy_score(y_prediction, y_true_values)
-        print('Dokladnosc Naive Bayess')
+        print('Dokladnosc drzew decyzyjnych')
         print(accuracy)
         positivePredictions = 0
         for i in range(len(labels)):
@@ -58,7 +59,7 @@ class NaiveBayesAlgorithm:
         return (positivePredictions, negativePredictions)
 
     def drawSummaryBarChart(self, algorithm):
-        objects = ('Naive Bayess trafione', 'Naive Bayess nietrafione')
+        objects = ('Drzewa decyzyjne trafione', 'Drzewa decyzyjne nietrafione')
         y_pos = numpy.arange(len(objects))
         performance = [algorithm[0], algorithm[1]]
         pyplot.bar(y_pos, performance, align='center', alpha=0.5)
@@ -67,7 +68,7 @@ class NaiveBayesAlgorithm:
         pyplot.show()
 
     def drawAccuracyBarChart(self, algorithm):
-        x_objects = ['Naive Bayess']
+        x_objects = ['Drzewa decyzyjne']
         y_pos = numpy.arange(len(x_objects))
         performance = [algorithm]
         pyplot.bar(y_pos, performance, align='center', alpha=0.5)
@@ -83,9 +84,9 @@ class NaiveBayesAlgorithm:
 
     @classmethod
     def build(cls, x_train, x_test, y_train, y_test):
-        algorithm = NaiveBayesAlgorithm()
-        algorithm.x_train = x_train
-        algorithm.x_test = x_test
-        algorithm.y_train = y_train
-        algorithm.y_test = y_test
-        return algorithm
+        classifier = TreeClassifier()
+        classifier.x_train = x_train
+        classifier.x_test = x_test
+        classifier.y_train = y_train
+        classifier.y_test = y_test
+        return classifier

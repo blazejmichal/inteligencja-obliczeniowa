@@ -1,4 +1,5 @@
-from praca_projektowa_2.algorithms.NaiveBayesAlgorithm import NaiveBayesAlgorithm
+from praca_projektowa_2.classifiers.NaiveBayesClassifier import NaiveBayesClassifier
+from praca_projektowa_2.classifiers.TreeClassifier import TreeClassifier
 from praca_projektowa_2.data_frame.DataFrameLoader import DataFrameLoader
 
 
@@ -11,8 +12,10 @@ def main():
     x_test = data_frame_loader.x_test
     y_train = data_frame_loader.y_train
     y_test = data_frame_loader.y_test
-    naive_bayess_algorithm = NaiveBayesAlgorithm.build(x_train, x_test, y_train, y_test)
-    naive_bayess_algorithm.run()
+    naive_bayess_classifier = NaiveBayesClassifier.build(x_train, x_test, y_train, y_test)
+    naive_bayess_classifier.run()
+    tree_classifier = TreeClassifier.build(x_train, x_test, y_train, y_test)
+    tree_classifier.run()
 
 
 if __name__ == '__main__':
