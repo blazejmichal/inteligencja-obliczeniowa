@@ -42,5 +42,15 @@ def runKNeighboursClassifier(x_train, x_test, y_train, y_test):
     return k_neighbours_classifier
 
 
+def runNeuralNetworksMLPClassifier(x_train, x_test, y_train, y_test):
+    classifiers = []
+    for i in range(1, 15):
+        classifier = KNeighboursClassifier.build(x_train, x_test, y_train, y_test, )
+        classifier.run()
+        classifiers.append(classifier)
+    k_neighbours_classifier = max(classifiers, key=attrgetter('accuracy'))
+    return k_neighbours_classifier
+
+
 if __name__ == '__main__':
     main()
