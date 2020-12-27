@@ -83,7 +83,7 @@ class DataFrameLoader:
     def divideDataFrame(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
         self.x_train = x_train
-        self.x_test = y_test
+        self.x_test = x_test
         self.y_train = y_train
         self.y_test = y_test
         pass
@@ -108,6 +108,7 @@ class DataFrameLoader:
         return data_frame
 
     def __init__(self):
+        self.run()
         pass
 
     @classmethod
@@ -119,6 +120,7 @@ class DataFrameLoader:
         data_frame_loader.feature_column_amount = feature_column_amount
         data_frame_loader.result_column_name = result_column_name
         data_frame_loader.data_frame_location = data_frame_location
+        data_frame_loader.run()
         return data_frame_loader
 
     def mapColumn(cls, data_frame, mapping_pattern, column_name):
