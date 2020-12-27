@@ -61,49 +61,86 @@ import pandas as pandas
 from sklearn.model_selection import train_test_split
 
 
-class Executor:
-    featureColumnAmount = 11
-    resultColumnName = 'quality'
-    dataFrameLocation = 'data_frame/winequality-red.csv'
+class DataFrameLoader:
+    feature_column_amount = 11
+    result_column_name = 'quality'
+    data_frame_location = 'data_frame/winequality-red.csv'
     x_train = []
     x_test = []
     y_train = []
     y_test = []
 
-    @classmethod
-    def run(cls):
-        dataFrame = cls.loadDataFrame()
-        dataFrame = cls.correctDataFrame(dataFrame)
-        (x, y) = cls.getXandY(dataFrame, cls.featureColumnAmount, cls.resultColumnName)
-        cls.divideDataFrame(x, y)
+    def run(self):
+        dataFrame = self.loadDataFrame()
+        dataFrame = self.correctDataFrame(dataFrame)
+        (x, y) = self.getXandY(dataFrame, self.feature_column_amount, self.result_column_name)
+        self.divideDataFrame(x, y)
 
-    @classmethod
-    def loadDataFrame(cls):
-        dataFrame = pandas.read_csv(cls.dataFrameLocation)
+    def loadDataFrame(self):
+        dataFrame = pandas.read_csv(self.data_frame_location)
         return dataFrame
 
-    @classmethod
-    def divideDataFrame(cls, x, y):
+    def divideDataFrame(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.33, random_state=0)
-        cls.X_train = x_train
-        cls.X_test = y_test
-        cls.y_train = y_train
-        cls.y_test = y_test
-        return x_train, x_test, y_train, y_test
+        self.X_train = x_train
+        self.X_test = y_test
+        self.y_train = y_train
+        self.y_test = y_test
+        # return x_train, x_test, y_train, y_test
+        pass
 
-    @classmethod
-    def getXandY(cls, dataFrame, featureColumnAmount, resultColumnName):
+    def getXandY(self, dataFrame, featureColumnAmount, resultColumnName):
         # bierze nazwy pierwszych kolumn okreslonych liczba
         features = list(dataFrame.columns[:featureColumnAmount])
         y = dataFrame[resultColumnName]
         x = dataFrame[features]
         return (x, y)
 
-    @classmethod
-    def correctDataFrame(cls, dataFrame):
+    def correctDataFrame(self, dataFrame):
         print("znalezione suma: ")
         print(dataFrame.isnull().any(axis=1).sum())
         print("znalezione linie: ")
         print(dataFrame[dataFrame.isna().any(axis=1)])
         dataFrame = dataFrame.fillna("N/A")
         return dataFrame
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def build(cls, feature_column_amount, result_column_name, data_frame_location):
+        data_frame_loader = DataFrameLoader()
+        # data_frame_loader._feature_column_amount = feature_column_amount
+        # data_frame_loader._result_column_name = result_column_name
+        # data_frame_loader._data_frame_location = data_frame_location
+        data_frame_loader.feature_column_amount = feature_column_amount
+        data_frame_loader.result_column_name = result_column_name
+        data_frame_loader.data_frame_location = data_frame_location
+        return data_frame_loader
+
+    # @property
+    # def feature_column_amount(self):
+    #     return self.feature_column_amount
+    #
+    # @feature_column_amount.setter
+    # def feature_column_amount(self, value):
+    #     self.feature_column_amount = value
+    #     pass
+    #
+    # @property
+    # def result_column_name(self):
+    #     return self.result_column_name
+    #
+    # @result_column_name.setter
+    # def result_column_name(self, value):
+    #     self.result_column_name = value
+    #     pass
+    #
+    # @property
+    # def data_frame_location(self):
+    #     return self.data_frame_location
+    #
+    # @data_frame_location.setter
+    # def data_frame_location(self, value):
+    #     self.data_frame_location = value
+    #     pass
