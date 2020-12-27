@@ -10,9 +10,11 @@ class KNeighboursClassifier:
     y_train = []
     y_test = []
     k = 1
+    name = str(k) + ' najblizszych sasiadow'
+    accuracy = 0
 
     def run(self):
-        print('K najblizszych sasiadow')
+        print(self.name)
         y_true_values = self.getTrueValuesOfTrainSet()
         classificator = self.train()
         y_predictions = self.predict(classificator)
@@ -40,16 +42,16 @@ class KNeighboursClassifier:
         fig = pyplot.figure()
         ax = fig.add_subplot(111)
         cax = ax.matshow(confusionMatrix)
-        pyplot.title('K najblizszych sasiadow')
+        pyplot.title(self.name)
         fig.colorbar(cax)
         ax.set_xticklabels([''] + labels)
         ax.set_yticklabels([''] + labels)
         pyplot.xlabel('Predicted')
         pyplot.ylabel('True')
         pyplot.show()
-        accuracy = accuracy_score(y_prediction, y_true_values)
-        print('Dokladnosc K najblizszych sasiadow')
-        print(accuracy)
+        self.accuracy = accuracy_score(y_prediction, y_true_values)
+        print('Dokladnosc ' + self.name)
+        print(self.accuracy)
         positivePredictions = 0
         for i in range(len(labels)):
             positivePredictions += confusionMatrix[i][i]
@@ -60,7 +62,7 @@ class KNeighboursClassifier:
         return (positivePredictions, negativePredictions)
 
     def drawSummaryBarChart(self, algorithm):
-        objects = ('K najblizszych sasiadow trafione', 'K najblizszych sasiadow nietrafione')
+        objects = (self.name + ' trafione', self.name + ' nietrafione')
         y_pos = numpy.arange(len(objects))
         performance = [algorithm[0], algorithm[1]]
         pyplot.bar(y_pos, performance, align='center', alpha=0.5)
@@ -69,7 +71,7 @@ class KNeighboursClassifier:
         pyplot.show()
 
     def drawAccuracyBarChart(self, algorithm):
-        x_objects = ['K najblizszych sasiadow']
+        x_objects = [self.name]
         y_pos = numpy.arange(len(x_objects))
         performance = [algorithm]
         pyplot.bar(y_pos, performance, align='center', alpha=0.5)
@@ -91,4 +93,5 @@ class KNeighboursClassifier:
         classifier.y_train = y_train
         classifier.y_test = y_test
         classifier.k = k
+        classifier.name = str(k) + ' najblizszych sasiadow'
         return classifier
