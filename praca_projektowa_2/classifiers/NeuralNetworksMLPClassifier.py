@@ -4,7 +4,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.neural_network import MLPClassifier
 
 
-class NerualNetworksMLPClassifier:
+class NeuralNetworksMLPClassifier:
     x_train = []
     x_test = []
     y_train = []
@@ -25,7 +25,7 @@ class NerualNetworksMLPClassifier:
         pass
 
     def train(self):
-        classifier = MLPClassifier(self.hidden_layer_sizes, self.max_iter)
+        classifier = MLPClassifier(hidden_layer_sizes=self.hidden_layer_sizes, max_iter=self.max_iter)
         classifier = classifier.fit(self.x_train, self.y_train)
         return classifier
 
@@ -88,7 +88,7 @@ class NerualNetworksMLPClassifier:
 
     @classmethod
     def build(cls, x_train, x_test, y_train, y_test, hidden_layer_sizes, max_iter):
-        classifier = NerualNetworksMLPClassifier()
+        classifier = NeuralNetworksMLPClassifier()
         classifier.x_train = x_train
         classifier.x_test = x_test
         classifier.y_train = y_train

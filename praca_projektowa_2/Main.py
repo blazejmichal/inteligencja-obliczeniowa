@@ -2,6 +2,7 @@ from operator import attrgetter
 
 from praca_projektowa_2.classifiers.KNeighboursClassifier import KNeighboursClassifier
 from praca_projektowa_2.classifiers.NaiveBayesClassifier import NaiveBayesClassifier
+from praca_projektowa_2.classifiers.NeuralNetworksMLPClassifier import NeuralNetworksMLPClassifier
 from praca_projektowa_2.classifiers.TreeClassifier import TreeClassifier
 from praca_projektowa_2.data_frame.DataFrameLoader import DataFrameLoader
 
@@ -18,6 +19,7 @@ def main():
     naive_bayess_classifier = runNaiveBayessClassifier(x_train, x_test, y_train, y_test)
     tree_classifier = runTreeClassifier(x_train, x_test, y_train, y_test)
     k_neighbours_classifier = runKNeighboursClassifier(x_train, x_test, y_train, y_test)
+    neural_networks_mlp_classifier = runNeuralNetworksMLPClassifier(x_train, x_test, y_train, y_test)
 
 
 def runNaiveBayessClassifier(x_train, x_test, y_train, y_test):
@@ -44,10 +46,13 @@ def runKNeighboursClassifier(x_train, x_test, y_train, y_test):
 
 def runNeuralNetworksMLPClassifier(x_train, x_test, y_train, y_test):
     classifiers = []
-    for i in range(1, 15):
-        classifier = KNeighboursClassifier.build(x_train, x_test, y_train, y_test, )
-        classifier.run()
-        classifiers.append(classifier)
+    for i in range(1, 5):
+        for j in range(1, 5):
+            hidden_layer_sizes = (i * 10, i * 10)
+            max_iter = j * 1000
+            classifier = NeuralNetworksMLPClassifier.build(x_train, x_test, y_train, y_test, hidden_layer_sizes, max_iter)
+            classifier.run()
+            classifiers.append(classifier)
     k_neighbours_classifier = max(classifiers, key=attrgetter('accuracy'))
     return k_neighbours_classifier
 
