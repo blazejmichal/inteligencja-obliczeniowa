@@ -2,11 +2,10 @@ from operator import attrgetter
 import numpy
 from matplotlib import pyplot
 from sklearn.metrics import confusion_matrix
+from praca_projektowa_2.classifiers.NeuralNetworksMLPClassifier import NeuralNetworksMLPClassifier
 
-from praca_projektowa_2.classifiers.KNeighboursClassifier import KNeighboursClassifier
 
-
-class KNeighboursAnalyzer:
+class NeuralNetworksMLPAnalyzer:
     x_train = []
     x_test = []
     y_train = []
@@ -15,10 +14,15 @@ class KNeighboursAnalyzer:
 
     def findBestClassifier(self):
         classifiers = []
-        for i in range(1, 15):
-            classifier = KNeighboursClassifier.build(self.x_train, self.x_test, self.y_train, self.y_test, i)
-            classifier.run()
-            classifiers.append(classifier)
+        for i in range(1, 5):
+            for j in range(1, 5):
+                hidden_layer_sizes = (i * 10, i * 10)
+                max_iter = j * 1000
+                classifier = NeuralNetworksMLPClassifier.build(self.x_train, self.x_test, self.y_train, self.y_test,
+                                                               hidden_layer_sizes,
+                                                               max_iter)
+                classifier.run()
+                classifiers.append(classifier)
         classifier = max(classifiers, key=attrgetter('accuracy'))
         self.classifier = classifier
         return classifier
@@ -66,6 +70,7 @@ class KNeighboursAnalyzer:
         pyplot.xticks(y_pos, objects)
         pyplot.title('Strzaly')
         pyplot.show()
+        pass
 
     def drawAccuracyBarChart(self, algorithm):
         x_objects = [self.classifier.name]
@@ -75,6 +80,7 @@ class KNeighboursAnalyzer:
         pyplot.xticks(y_pos, x_objects)
         pyplot.title('Dokladnosc')
         pyplot.show()
+        pass
 
     def countAccuracy(self, shots):
         return shots[0] / (sum(shots))
@@ -84,7 +90,7 @@ class KNeighboursAnalyzer:
 
     @classmethod
     def build(cls, x_train, x_test, y_train, y_test):
-        analyzer = KNeighboursAnalyzer()
+        analyzer = NeuralNetworksMLPAnalyzer()
         analyzer.x_train = x_train
         analyzer.x_test = x_test
         analyzer.y_train = y_train

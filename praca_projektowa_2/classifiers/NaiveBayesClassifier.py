@@ -12,17 +12,27 @@ class NaiveBayesClassifier:
     y_test_values = []
     y_predictions = []
 
+    @classmethod
+    def build(cls, x_train, x_test, y_train, y_test):
+        classifier = NaiveBayesClassifier()
+        classifier.x_train = x_train
+        classifier.x_test = x_test
+        classifier.y_train = y_train
+        classifier.y_test = y_test
+        classifier.run()
+        return classifier
+
+    def train(self):
+        classifier = GaussianNB()
+        classifier = classifier.fit(self.x_train, self.y_train)
+        return classifier
+
     def run(self):
         self.getValuesOfTestSet()
         classifier = self.train()
         self.predict(classifier)
         self.evaluateClassifier(self.y_test_values, self.y_predictions)
         pass
-
-    def train(self):
-        classifier = GaussianNB()
-        classifier = classifier.fit(self.x_train, self.y_train)
-        return classifier
 
     def predict(self, classifier):
         self.y_predictions = classifier.predict(self.x_test)
@@ -38,16 +48,6 @@ class NaiveBayesClassifier:
 
     def __init__(self):
         pass
-
-    @classmethod
-    def build(cls, x_train, x_test, y_train, y_test):
-        classifier = NaiveBayesClassifier()
-        classifier.x_train = x_train
-        classifier.x_test = x_test
-        classifier.y_train = y_train
-        classifier.y_test = y_test
-        classifier.run()
-        return classifier
 
 # class NaiveBayesClassifier:
 #     x_train = []
