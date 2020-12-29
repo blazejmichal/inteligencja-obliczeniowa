@@ -1,4 +1,3 @@
-from sklearn.metrics import accuracy_score
 from sklearn.neural_network import MLPClassifier
 
 from praca_projektowa_2.classifiers.Classifier import Classifier
@@ -28,7 +27,8 @@ class NeuralNetworksMLPClassifier(Classifier):
         classifier.y_test = y_test
         classifier.hidden_layer_sizes = hidden_layer_sizes
         classifier.max_iter = max_iter
-        classifier.name = 'Neural Networks - MLP'
+        classifier.name = 'Neural Networks - MLP' + ' (hidden_layer_sizes = ' + str(
+            hidden_layer_sizes) + ', max_iter = ' + str(max_iter) + ')'
         return classifier
 
     def train(self):
