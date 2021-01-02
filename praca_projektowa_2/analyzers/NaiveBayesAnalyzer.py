@@ -8,17 +8,19 @@ class NaiveBayesAnalyzer(Analyzer):
     y_train = []
     y_test = []
     classifier = None
+    result_mapping_legend = {}
 
     def __init__(self):
         pass
 
     @classmethod
-    def build(cls, x_train, x_test, y_train, y_test):
+    def build(cls, x_train, x_test, y_train, y_test, result_mapping_legend):
         analyzer = NaiveBayesAnalyzer()
         analyzer.x_train = x_train
         analyzer.x_test = x_test
         analyzer.y_train = y_train
         analyzer.y_test = y_test
+        analyzer.result_mapping_legend = result_mapping_legend
         return analyzer
 
     def findBestClassifier(self):

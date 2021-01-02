@@ -11,6 +11,7 @@ class Analyzer:
     y_train: list
     y_test: list
     classifier: Classifier
+    result_mapping_legend: {}
 
     def findBestClassifier(self):
         pass
@@ -38,6 +39,7 @@ class Analyzer:
         ax.set_yticklabels([''] + labels)
         pyplot.xlabel('Przewidziane')
         pyplot.ylabel('Prawdziwe')
+        pyplot.legend(self.result_mapping_legend)
         pyplot.show()
         print(self.classifier.name)
         print('Macierz bledu: ')

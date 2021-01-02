@@ -3,6 +3,7 @@ import matplotlib.pyplot as pyplot
 
 class DataFrameAnalyzer:
     data_frame: object
+    data_frame_legend: {}
 
     def analyze(self):
         for name, values in self.data_frame.iteritems():
@@ -17,6 +18,11 @@ class DataFrameAnalyzer:
             labels = [*column]
             values = column.values()
             pyplot.pie(values, labels=labels)
+            try:
+                legend = self.data_frame_legend[name]
+                pyplot.legend(legend)
+            except KeyError:
+                KeyError
             pyplot.title("Zestawienie czestosci wystepowania wartosci w kolumnie: " + str(name))
             pyplot.show()
             print('\n')
@@ -43,7 +49,8 @@ class DataFrameAnalyzer:
         pass
 
     @classmethod
-    def build(cls, data_frame):
+    def build(cls, data_frame, data_frame_legend):
         data_frame_analyzer = DataFrameAnalyzer()
         data_frame_analyzer.data_frame = data_frame
+        data_frame_analyzer.data_frame_legend = data_frame_legend
         return data_frame_analyzer
