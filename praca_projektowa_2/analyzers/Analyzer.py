@@ -19,7 +19,6 @@ class Analyzer:
         best_classifier = self.findBestClassifier()
         y_test_values = best_classifier.y_test_values
         y_predictions = best_classifier.y_predictions
-        print(best_classifier.name)
         (scores, misses) = self.drawConfusionMatrix(y_test_values, y_predictions)
         self.drawSummaryBarChart((scores, misses))
         self.drawAccuracyBarChart(self.countAccuracy((scores, misses)))
@@ -27,20 +26,23 @@ class Analyzer:
 
     def drawConfusionMatrix(self, y_true_values, y_prediction):
         confusionMatrix = confusion_matrix(y_true_values, y_prediction)
-        print(confusionMatrix)
-        labels = ['1', '2', '3', '4', '5']
+        labels = [b for a in [y_true_values, y_prediction] for b in a]
+        labels = list(dict.fromkeys(labels))
+        labels.sort()
         fig = pyplot.figure()
         ax = fig.add_subplot(111)
         cax = ax.matshow(confusionMatrix)
-        pyplot.title(self.classifier.name)
+        pyplot.title(self.classifier.name + ' macierz błedu')
         fig.colorbar(cax)
         ax.set_xticklabels([''] + labels)
         ax.set_yticklabels([''] + labels)
-        pyplot.xlabel('Predicted')
-        pyplot.ylabel('True')
+        pyplot.xlabel('Przewidziane')
+        pyplot.ylabel('Prawdziwe')
         pyplot.show()
-        print('Dokladnosc ' + self.classifier.name)
-        print(self.classifier.accuracy)
+        print(self.classifier.name)
+        print('Macierz bledu: ')
+        print(confusionMatrix)
+        print('Dokladnosc ' + self.classifier.name + ': ' + "{:.5%}".format(self.classifier.accuracy))
         positivePredictions = 0
         for i in range(len(labels)):
             positivePredictions += confusionMatrix[i][i]
@@ -56,7 +58,7 @@ class Analyzer:
         performance = [algorithm[0], algorithm[1]]
         pyplot.bar(y_pos, performance, align='center', alpha=0.5)
         pyplot.xticks(y_pos, objects)
-        pyplot.title('Strzaly')
+        pyplot.title('Klasyfikacje')
         pyplot.show()
 
     def drawAccuracyBarChart(self, algorithm):

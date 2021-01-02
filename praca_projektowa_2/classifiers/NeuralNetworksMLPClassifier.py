@@ -27,8 +27,8 @@ class NeuralNetworksMLPClassifier(Classifier):
         classifier.y_test = y_test
         classifier.hidden_layer_sizes = hidden_layer_sizes
         classifier.max_iter = max_iter
-        classifier.name = 'Neural Networks - MLP' + ' (hidden_layer_sizes = ' + str(
-            hidden_layer_sizes) + ', max_iter = ' + str(max_iter) + ')'
+        classifier.name = 'Neural Networks - MLP' + ' (rozmiary ukrytych warstw = ' + str(
+            hidden_layer_sizes) + ', maksymalna iteracja = ' + str(max_iter) + ')'
         return classifier
 
     def train(self):
