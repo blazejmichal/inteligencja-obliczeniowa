@@ -1,4 +1,3 @@
-import numpy
 import pandas as pandas
 from pandas.core.dtypes.common import is_string_dtype, is_numeric_dtype
 from sklearn.model_selection import train_test_split
@@ -6,9 +5,7 @@ from sklearn.model_selection import train_test_split
 
 class DataFrameLoader:
     result_column_name = 'quality'
-    # result_column_name = 'Response'
     data_frame_location = 'data_frame/winequality-red.csv'
-    # data_frame_location = 'data_frame/healthinsurance.csv'
     x_train = []
     x_test = []
     y_train = []

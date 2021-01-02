@@ -3,7 +3,6 @@ from praca_projektowa_2.analyzers.KNeighboursAnalyzer import KNeighboursAnalyzer
 from praca_projektowa_2.analyzers.NaiveBayesAnalyzer import NaiveBayesAnalyzer
 from praca_projektowa_2.analyzers.NeuralNetworksMLPAnalyzer import NeuralNetworksMLPAnalyzer
 from praca_projektowa_2.analyzers.TreeAnalyzer import TreeAnalyzer
-from praca_projektowa_2.classifiers.TreeClassifier import TreeClassifier
 from praca_projektowa_2.data_frame.DataFrameAnalyzer import DataFrameAnalyzer
 from praca_projektowa_2.data_frame.DataFrameLoader import DataFrameLoader
 from textwrap import wrap
@@ -47,12 +46,6 @@ def runTreeAnalyzer(x_train, x_test, y_train, y_test, result_mapping_legend):
     tree_analyzer = TreeAnalyzer.build(x_train, x_test, y_train, y_test, result_mapping_legend)
     tree_analyzer.run()
     return tree_analyzer
-
-
-def runTreeClassifier(x_train, x_test, y_train, y_test, result_mapping_legend):
-    tree_classifier = TreeClassifier.build(x_train, x_test, y_train, y_test, result_mapping_legend)
-    tree_classifier.run()
-    return tree_classifier
 
 
 def runKNeighboursAnalyzer(x_train, x_test, y_train, y_test, result_mapping_legend):
