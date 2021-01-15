@@ -58,8 +58,8 @@ def runTask():
     not_survived = df.set_index('Items').filter(regex='No', axis=0)
     print('Dlugosc: ' + str(len(not_survived)))
     print(not_survived)
-    labels=["Wszystkie reguly", "Reguly z przezyli", "Reguly z nie przezyli"]
-    values = [len(resultsPoint2),len(survived), len(not_survived)]
+    labels = ["Wszystkie reguly", "Reguly z przezyli", "Reguly z nie przezyli"]
+    values = [len(resultsPoint2), len(survived), len(not_survived)]
     pyplot.barh(labels, values)
     for index, value in enumerate(values):
         pyplot.text(value, index, str(value))
